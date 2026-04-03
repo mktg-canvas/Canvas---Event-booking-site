@@ -42,10 +42,7 @@ function doPost(e) {
     const { building, date, startTime, endTime,
             attendees, eventName, contactPerson, contactNumber } = d
 
-    if (!building || !date || !startTime || !endTime ||
-        !attendees || !eventName || !contactPerson || !contactNumber) {
-      return json({ success: false, message: 'Missing required fields.' })
-    }
+    // No fields are mandatory — submit whatever is provided
 
     const sheet  = getOrCreateSheet()
     const events = readEvents(sheet)

@@ -104,17 +104,13 @@ export default function App() {
     const { building, date, startTime, endTime,
             attendees, eventName, contactPerson, contactNumber } = form
 
-    if (!building || !date || !startTime || !endTime ||
-        !attendees || !eventName || !contactPerson || !contactNumber) {
-      return 'All fields are required — please complete every field.'
-    }
-    if (!/^\d{10}$/.test(contactNumber)) {
+    if (contactNumber && !/^\d{10}$/.test(contactNumber)) {
       return 'Contact number must be exactly 10 digits (numbers only).'
     }
-    if (parseInt(attendees, 10) < 1) {
+    if (attendees && parseInt(attendees, 10) < 1) {
       return 'Number of attendees must be at least 1.'
     }
-    if (parseInt(attendees, 10) > 200) {
+    if (attendees && parseInt(attendees, 10) > 200) {
       return 'Maximum 200 attendees allowed per booking.'
     }
     if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
