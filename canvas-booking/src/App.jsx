@@ -421,11 +421,10 @@ export default function App() {
                         <tr>
                           <th>#</th>
                           <th>Building</th>
-                          <th>Date</th>
-                          <th>Start</th>
-                          <th>End</th>
-                          <th>Attendees</th>
                           <th>Event Name</th>
+                          <th>Date</th>
+                          <th>Time</th>
+                          <th>Attendees</th>
                           <th>Contact Person</th>
                           <th>Contact Number</th>
                         </tr>
@@ -435,11 +434,10 @@ export default function App() {
                           <tr key={`${e.building}-${e.date}-${e.startTime}-${i}`}>
                             <td className="td-num">{i + 1}</td>
                             <td><span className="badge">{e.building}</span></td>
-                            <td>{fmtDate(e.date)}</td>
-                            <td>{fmtTime(e.startTime)}</td>
-                            <td>{fmtTime(e.endTime)}</td>
-                            <td>{e.attendees}</td>
                             <td className="td-name">{e.eventName}</td>
+                            <td>{fmtDate(e.date)}</td>
+                            <td style={{whiteSpace:'nowrap'}}>{fmtTime(e.startTime)}{e.endTime ? ` – ${fmtTime(e.endTime)}` : ''}</td>
+                            <td>{e.attendees}</td>
                             <td>{e.contactPerson}</td>
                             <td>{e.contactNumber}</td>
                           </tr>
