@@ -2,7 +2,7 @@
 export const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyYJH6nVZqSj9Xv_m5ZM4U1PdlwVDa6mdohDh1hOuYa511M7Jh8KNsl-nRsrHZhnhaM/exec'
 
 // ── Buildings ──────────────────────────────────────────────────────
-export const BUILDINGS = ['Canvas 1317', 'Canvas 1331']
+export const BUILDINGS = ['Canvas 1317', 'Canvas 1331', 'Canvas 144', 'Others']
 
 // ── Time slots ────────────────────────────────────────────────────
 export const START_SLOTS = [
