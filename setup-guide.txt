@@ -1,0 +1,133 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Canvas Event Manager — Setup Guide
+  Total time: ~5 minutes  |  Done once, works forever
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+WHAT YOU WILL DO
+────────────────
+  1. Create a Google Sheet (this is your live database)
+  2. Paste the Apps Script into it (this is the API)
+  3. Deploy the Script as a Web App (this gives you the URL)
+  4. Paste the URL into the HTML file (one line change)
+  5. Share the HTML file with your team
+
+
+STEP 1 — Create the Google Sheet
+──────────────────────────────────
+  › Go to sheets.google.com
+  › Click the "+" icon to create a new blank spreadsheet
+  › Name it anything, e.g. "Canvas Event Data"
+
+  Leave the sheet open — you need it for Step 2.
+
+
+STEP 2 — Add the Apps Script
+──────────────────────────────
+  › In your Google Sheet, click:
+      Extensions  →  Apps Script
+
+  › A new tab opens showing a code editor.
+
+  › Select ALL the existing code (Ctrl+A or Cmd+A) and DELETE it.
+
+  › Open the file  apps-script.js  (provided alongside this guide).
+
+  › Copy the entire contents and paste it into the Apps Script editor.
+
+  › Click the floppy-disk icon (or press Ctrl+S / Cmd+S) to save.
+    Name the project anything, e.g. "Canvas Event Manager".
+
+
+STEP 3 — Deploy as a Web App
+──────────────────────────────
+  › In the Apps Script editor, click:
+      Deploy  →  New Deployment
+
+  › In the dialog that opens:
+      - Click the gear icon next to "Select type" → choose "Web app"
+      - Description: anything, e.g. "v1"
+      - Execute as:       Me
+      - Who has access:   Anyone
+
+  › Click "Deploy".
+
+  › Google will ask you to authorise the script.
+    Click "Authorise access" → choose your Google account →
+    click "Allow".
+
+  › After authorisation you will see a screen with:
+      "Web app URL: https://script.google.com/macros/s/..."
+
+  › COPY that URL — you need it for Step 4.
+
+  ⚠  Important: copy the full URL exactly as shown.
+     It is long and starts with https://script.google.com/macros/s/
+
+
+STEP 4 — Connect the HTML file
+────────────────────────────────
+  › Open  event-manager.html  in any text editor (TextEdit, Notepad,
+    VS Code, etc.)
+
+  › Press Ctrl+F (or Cmd+F) and search for:
+      YOUR_APPS_SCRIPT_URL_HERE
+
+  › You will find this line near the top of the <script> section:
+      const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+  › Replace  YOUR_APPS_SCRIPT_URL_HERE  with the URL you copied,
+    keeping the single quotes. Example:
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/ABC123.../exec';
+
+  › Save the file.
+
+
+STEP 5 — Share with your team
+───────────────────────────────
+  › Upload  event-manager.html  to your team's shared Google Drive,
+    internal server, or send it directly via WhatsApp / email.
+
+  › Anyone who opens the file in a browser will automatically connect
+    to the same live Google Sheet.
+
+  › No installation, no login, no server needed.
+
+
+DONE ✓
+──────
+  Your team can now:
+  • Open event-manager.html in any browser
+  • Add events → they appear in the Sheet instantly
+  • View Scheduled Events → live data, filterable by building
+  • Download the Sheet as .xlsx anytime from Google Drive
+
+
+TROUBLESHOOTING
+───────────────
+  "Network error" when submitting:
+    → Check that you pasted the full Apps Script URL (ends in /exec)
+    → Re-deploy the script: Deploy → Manage Deployments → Edit → Deploy
+
+  "Setup needed" message in the tool:
+    → You haven't replaced YOUR_APPS_SCRIPT_URL_HERE yet (Step 4)
+
+  Events not showing in Scheduled Events:
+    → Click the Refresh button
+    → Check that the Sheet named "Events" exists and has data
+
+  Want to view or edit data directly:
+    → Open the Google Sheet — all bookings are there as rows
+    → You can delete rows directly in the Sheet if needed
+
+  Need to re-share the tool after updating it:
+    → Just send the updated  event-manager.html  file again
+    → The URL inside it stays the same — no re-deployment needed
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Files delivered:
+    event-manager.html  —  The tool (open in any browser)
+    apps-script.js      —  Paste into Google Apps Script
+    setup-guide.txt     —  This file
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
