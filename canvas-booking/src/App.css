@@ -519,6 +519,94 @@
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
+.event-card.next-event-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  border: none;
+  padding: 24px 30px;
+  box-shadow: 0 10px 30px -8px rgba(109, 40, 217, 0.5);
+  color: white;
+}
+
+.next-event-card .event-card-title {
+  font-size: 22px;
+  color: white;
+  margin-top: 4px;
+}
+
+.next-event-card .event-card-date,
+.next-event-card .event-card-time,
+.next-event-card .event-card-detail {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.next-event-card .event-card-time {
+  font-size: 15px;
+}
+
+.next-event-card .event-card-detail svg,
+.next-event-card .event-card-time svg {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.next-event-card .badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.next-event-card .badge.badge-up-next {
+  background: white;
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.next-event-card .event-card-details {
+  border-top: none;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+}
+
+.next-event-card .event-card-detail {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.next-event-card .event-card-detail svg {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.next-event-card .event-card-actions {
+  border-top-color: rgba(255, 255, 255, 0.2);
+  margin-top: 20px;
+}
+
+.next-event-card .edit-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.next-event-card .edit-btn:hover {
+  background: white;
+  color: var(--accent);
+  border-color: white;
+}
+
 .event-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card);

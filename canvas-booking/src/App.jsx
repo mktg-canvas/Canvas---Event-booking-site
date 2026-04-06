@@ -445,10 +445,15 @@ export default function App() {
                     </div>
                   ) : (
                     <div className="events-grid">
-                      {visibleEvents.map((e, i) => (
-                        <div key={`${e.building}-${e.date}-${e.startTime}-${i}`} className="event-card">
+                      {visibleEvents.map((e, i) => {
+                        const isNextEvent = view === 'upcoming' && i === 0;
+                        return (
+                        <div key={`${e.building}-${e.date}-${e.startTime}-${i}`} className={`event-card ${isNextEvent ? 'next-event-card' : ''}`}>
                           <div className="event-card-header">
-                            <span className="badge">{e.building}</span>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                              <span className="badge">{e.building}</span>
+                              {isNextEvent && <span className="badge badge-up-next">Up Next</span>}
+                            </div>
                             <span className="event-card-date">{fmtDate(e.date)}</span>
                           </div>
                           <h3 className="event-card-title">{e.eventName}</h3>
@@ -480,7 +485,7 @@ export default function App() {
                             </button>
                           </div>
                         </div>
-                      ))}
+                      )})}
                     </div>
                   )}
                 </div>
