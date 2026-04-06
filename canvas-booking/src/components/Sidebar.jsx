@@ -53,19 +53,25 @@ export default function Sidebar({ activeView, onNavigate, isOpen, onClose }) {
         </button>
 
         <button
-          className={`nav-btn ${activeView === 'scheduled' ? 'active' : ''}`}
-          onClick={() => onNavigate('scheduled')}
+          className={`nav-btn ${activeView === 'upcoming' ? 'active' : ''}`}
+          onClick={() => onNavigate('upcoming')}
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="8" y1="6"  x2="21" y2="6"/>
-            <line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/>
-            <circle cx="3.5" cy="6"  r="0.5" fill="currentColor" stroke="none"/>
-            <circle cx="3.5" cy="12" r="0.5" fill="currentColor" stroke="none"/>
-            <circle cx="3.5" cy="18" r="0.5" fill="currentColor" stroke="none"/>
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
-          Scheduled Events
+          Upcoming Events
+        </button>
+
+        <button
+          className={`nav-btn ${activeView === 'past' ? 'active' : ''}`}
+          onClick={() => onNavigate('past')}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Past Events
         </button>
       </nav>
 

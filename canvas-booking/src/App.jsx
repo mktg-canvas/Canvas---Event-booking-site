@@ -14,7 +14,8 @@ import { getEvents, bookEvent } from './api'
 const VIEW_META = {
   add:       { title: 'Add Event',        sub: 'Book a room in Canvas 1317 or Canvas 1331' },
   edit:      { title: 'Edit Event',       sub: 'Update the details for this booking' },
-  scheduled: { title: 'Scheduled Events', sub: 'All upcoming bookings across both buildings' },
+  upcoming:  { title: 'Upcoming Events',  sub: 'Future bookings across both buildings' },
+  past:      { title: 'Past Events',      sub: 'Previous bookings across both buildings' },
 }
 
 /* ── Initial form state ──────────────────────────────────────────── */
@@ -58,7 +59,7 @@ export default function App() {
   function navigate(name) {
     setView(name)
     setSidebarOpen(false)
-    if (name === 'scheduled') loadEvents()
+    if (name === 'upcoming' || name === 'past') loadEvents()
   }
 
   /* ── Form field change ─────────────────────────────────────────── */
@@ -144,7 +145,7 @@ export default function App() {
         setForm(EMPTY_FORM)
         setShowConfirm(false)
         setBookedRanges([])
-        setTimeout(() => navigate('scheduled'), 1500)
+        setTimeout(() => navigate('upcoming'), 1500)
       } else if (result.conflict) {
         setShowConfirm(false)
         setFormError(result.message || 'This time slot conflicts with an existing booking.')
@@ -176,10 +177,19 @@ export default function App() {
 
   /* Filtered + sorted events */
   const visibleEvents = (filter === 'all' ? events : events.filter(e => e.building === filter))
-    .slice()
+    .filter(e => {
+      const today = todayISO()
+      const isPast = e.date < today
+      return view === 'past' ? isPast : !isPast
+    })
     .sort((a, b) => {
-      const d = b.date.localeCompare(a.date)
-      return d !== 0 ? d : toMins(b.startTime) - toMins(a.startTime)
+      if (view === 'past') {
+        const d = b.date.localeCompare(a.date)
+        return d !== 0 ? d : toMins(b.startTime) - toMins(a.startTime)
+      } else {
+        const d = a.date.localeCompare(b.date)
+        return d !== 0 ? d : toMins(a.startTime) - toMins(b.startTime)
+      }
     })
 
   /* ── Slot grid two-click range selection ───────────────────────── */
@@ -378,8 +388,8 @@ export default function App() {
               </div>
             )}
 
-            {/* ── SCHEDULED EVENTS ──────────────────────────────── */}
-            {view === 'scheduled' && (
+            {/* ── UPCOMING & PAST EVENTS ──────────────────────────── */}
+            {(view === 'upcoming' || view === 'past') && (
               <>
                 <div className="ev-header">
                   <div className="pills">
