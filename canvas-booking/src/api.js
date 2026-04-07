@@ -28,8 +28,9 @@ export async function getEvents(filters = {}) {
  */
 export async function bookEvent(payload) {
   const res = await fetch(APPS_SCRIPT_URL, {
-    method: 'POST',
-    body:   JSON.stringify(payload),
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify(payload),
   })
 
   if (!res.ok) throw new Error(`Server returned ${res.status}`)

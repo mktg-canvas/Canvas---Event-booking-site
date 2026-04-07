@@ -90,6 +90,15 @@
   opacity: 0.75;
 }
 
+/* Past */
+.sg-past {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  border-color: #E5E7EB;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Selected start */
 .sg-start {
   background: var(--accent);

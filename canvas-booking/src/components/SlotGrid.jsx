@@ -1,5 +1,5 @@
 import { START_SLOTS } from '../constants'
-import { toMins, overlaps } from '../utils'
+import { toMins, overlaps, todayISO } from '../utils'
 import './SlotGrid.css'
 
 /**
@@ -10,6 +10,7 @@ import './SlotGrid.css'
  *   bookedRanges  {Array}  [{s, e}] of already-booked minute ranges
  *   selectedStart {string} Currently selected start-time slot (or '')
  *   selectedEnd   {string} Currently selected end-time slot (or '')
+ *   selectedDate  {string} Currently selected date (yyyy-MM-dd)
  *   onSelect      {fn}     Called with slot string when a slot is clicked
  *   loading       {bool}   Show loading overlay
  */
@@ -17,15 +18,24 @@ export default function SlotGrid({
   bookedRanges = [],
   selectedStart = '',
   selectedEnd = '',
+  selectedDate = '',
   onSelect,
   loading = false,
 }) {
   const selStartMins = selectedStart ? toMins(selectedStart) : -1
   const selEndMins   = selectedEnd   ? toMins(selectedEnd)   : -1
+  
+  // To block past slots if the selected date is today
+  const isToday = selectedDate === todayISO()
+  const nowMins = isToday ? (() => { const n = new Date(); return n.getHours() * 60 + n.getMinutes() })() : -1
 
   function getSlotState(slot) {
     const s = toMins(slot)
     const e = s + 60
+
+    if (isToday && s < nowMins) {
+      return 'past' // Past time slots for today
+    }
 
     const booked = bookedRanges.some(r => overlaps(s, e, r.s, r.e))
     if (booked) return 'booked'
@@ -57,13 +67,19 @@ export default function SlotGrid({
       <div className={`slot-grid ${loading ? 'sg-loading' : ''}`}>
         {START_SLOTS.map(slot => {
           const state = getSlotState(slot)
+          const isDisabled = state === 'booked' || state === 'past' || !onSelect
+          
+          let title = slot
+          if (state === 'booked') title += ' — already booked'
+          if (state === 'past') title += ' — time has passed'
+          
           return (
             <button
               key={slot}
               className={`sg-slot sg-${state}`}
-              disabled={state === 'booked' || !onSelect}
-              onClick={() => onSelect && state !== 'booked' && onSelect(slot)}
-              title={slot + (state === 'booked' ? ' — already booked' : '')}
+              disabled={isDisabled}
+              onClick={() => onSelect && !isDisabled && onSelect(slot)}
+              title={title}
             >
               {slot.replace(':00 ', '\n')}
             </button>

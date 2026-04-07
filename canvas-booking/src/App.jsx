@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import './App.css'
 
 import Sidebar       from './components/Sidebar'
@@ -6,7 +6,7 @@ import Calendar      from './components/Calendar'
 import SlotGrid      from './components/SlotGrid'
 import ConfirmModal  from './components/ConfirmModal'
 
-import { BUILDINGS, END_SLOTS, APPS_SCRIPT_URL } from './constants'
+import { BUILDINGS, APPS_SCRIPT_URL } from './constants'
 import { toMins, fmtDate, fmtTime, todayISO, overlaps } from './utils'
 import { getEvents, bookEvent } from './api'
 
@@ -56,10 +56,14 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(null), 4200)
   }
 
+  // Clean up toast timer on unmount
+  useEffect(() => () => clearTimeout(toastTimer.current), [])
+
   function navigate(name) {
     setView(name)
     setSidebarOpen(false)
-    if (name === 'upcoming' || name === 'past') loadEvents()
+    // Only fetch if we have no data yet; Refresh button handles manual reloads
+    if ((name === 'upcoming' || name === 'past') && events.length === 0) loadEvents()
   }
 
   /* ── Form field change ─────────────────────────────────────────── */
@@ -77,7 +81,17 @@ export default function App() {
     setPreviewLoading(true)
     try {
       const evs = await getEvents({ building, date })
-      setBookedRanges(evs.map(e => ({ s: toMins(e.startTime), e: toMins(e.endTime) })))
+      // Events with only a startTime are treated as 1-hour bookings
+      setBookedRanges(
+        evs
+          .filter(e => e.startTime)
+          .map(e => {
+            const s = toMins(e.startTime)
+            const e_ = e.endTime ? toMins(e.endTime) : s + 60
+            return { s, e: e_ }
+          })
+          .filter(r => r.e > r.s)
+      )
     } catch {
       setBookedRanges([])
     } finally {
@@ -106,6 +120,11 @@ export default function App() {
     const { building, date, startTime, endTime,
             attendees, eventName, contactPerson, contactNumber } = form
 
+    if (!building) return 'Please select a building.'
+    if (!date) return 'Please select a date.'
+    if (!startTime || !endTime) return 'Please select a time range.'
+    if (!eventName.trim()) return 'Please enter an event name.'
+    if (!contactPerson.trim()) return 'Please enter a contact person.'
     if (contactNumber && !/^\d{10}$/.test(contactNumber)) {
       return 'Contact number must be exactly 10 digits (numbers only).'
     }
@@ -118,7 +137,7 @@ export default function App() {
     if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
       return 'Setup needed: replace YOUR_APPS_SCRIPT_URL_HERE in src/constants.js with your Apps Script URL.'
     }
-    return null
+    return ''
   }
 
   function handleSubmitClick() {
@@ -176,21 +195,24 @@ export default function App() {
   }, [])
 
   /* Filtered + sorted events */
-  const visibleEvents = (filter === 'all' ? events : events.filter(e => e.building === filter))
-    .filter(e => {
-      const today = todayISO()
-      const isPast = e.date < today
-      return view === 'past' ? isPast : !isPast
-    })
-    .sort((a, b) => {
-      if (view === 'past') {
-        const d = b.date.localeCompare(a.date)
-        return d !== 0 ? d : toMins(b.startTime) - toMins(a.startTime)
-      } else {
-        const d = a.date.localeCompare(b.date)
-        return d !== 0 ? d : toMins(a.startTime) - toMins(b.startTime)
-      }
-    })
+  const visibleEvents = useMemo(() => {
+    const today = todayISO()
+    return (filter === 'all' ? events : events.filter(e => e.building === filter))
+      .filter(e => {
+        if (!e.date) return false   // skip events with no date
+        const isPast = e.date < today
+        return view === 'past' ? isPast : !isPast
+      })
+      .sort((a, b) => {
+        if (view === 'past') {
+          const d = b.date.localeCompare(a.date)
+          return d !== 0 ? d : toMins(b.startTime) - toMins(a.startTime)
+        } else {
+          const d = a.date.localeCompare(b.date)
+          return d !== 0 ? d : toMins(a.startTime) - toMins(b.startTime)
+        }
+      })
+  }, [events, filter, view])
 
   /* ── Slot grid two-click range selection ───────────────────────── */
   function handleSlotClick(slot) {
@@ -198,24 +220,23 @@ export default function App() {
     if (!startTime || endTime) {
       // No start yet, or both already set → reset and pick new start
       setForm(prev => ({ ...prev, startTime: slot, endTime: '' }))
+      setFormError('')
     } else if (toMins(slot) > toMins(startTime)) {
-      // Start set, no end yet, clicked after start → set as end
+      // Check if proposed range overlaps any booked slot
+      const rangeStart = toMins(startTime)
+      const rangeEnd   = toMins(slot)
+      const conflict   = bookedRanges.some(r => overlaps(rangeStart, rangeEnd, r.s, r.e))
+      if (conflict) {
+        setFormError('This time range overlaps an existing booking. Choose a different slot.')
+        return
+      }
       setForm(prev => ({ ...prev, endTime: slot }))
+      setFormError('')
     } else {
       // Clicked same slot or before start → reset to new start
       setForm(prev => ({ ...prev, startTime: slot, endTime: '' }))
+      setFormError('')
     }
-    setFormError('')
-  }
-
-  /* ── Filtered end-time options (disable <= start) ──────────────── */
-  function endTimeOptions() {
-    const startMins = form.startTime ? toMins(form.startTime) : -1
-    return END_SLOTS.map(t => ({
-      label:    t,
-      value:    t,
-      disabled: toMins(t) <= startMins,
-    }))
   }
 
   /* ── Edit Event ────────────────────────────────────────────────── */
@@ -319,6 +340,7 @@ export default function App() {
                             bookedRanges={bookedRanges}
                             selectedStart={form.startTime}
                             selectedEnd={form.endTime}
+                            selectedDate={form.date}
                             onSelect={handleSlotClick}
                             loading={previewLoading}
                           />
@@ -382,7 +404,7 @@ export default function App() {
 
                 {/* Submit */}
                 <button className="submit-btn" onClick={handleSubmitClick}>
-                  Review &amp; Book
+                  {form.action === 'edit' ? 'Review & Update' : 'Review & Book'}
                 </button>
 
               </div>
