@@ -6,7 +6,7 @@ import Calendar      from './components/Calendar'
 import SlotGrid      from './components/SlotGrid'
 import ConfirmModal  from './components/ConfirmModal'
 
-import { BUILDINGS, APPS_SCRIPT_URL } from './constants'
+import { BUILDINGS } from './constants'
 import { toMins, fmtDate, fmtTime, todayISO, overlaps } from './utils'
 import { getEvents, bookEvent } from './api'
 import { supabase } from './supabase'
@@ -293,20 +293,6 @@ export default function App() {
             {(view === 'add' || view === 'edit') && (
               <div className="form-card">
 
-                {/* Inline error alert */}
-                {formError && (
-                  <div className="form-alert show" style={{ marginBottom: 20 }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" strokeWidth="2"
-                         strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10"/>
-                      <line x1="12" y1="8"  x2="12"    y2="12"/>
-                      <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <span>{formError}</span>
-                  </div>
-                )}
-
                 {/* ── Step 1: Where? ── */}
                 <div className="form-step">
                   <div className="step-header">
@@ -384,9 +370,9 @@ export default function App() {
                     <div className="fg">
                       <label>No. of Attendees</label>
                       <input
-                        type="number" placeholder="e.g. 12"
+                        type="text" inputMode="numeric" pattern="[0-9]*" placeholder="e.g. 12"
                         value={form.attendees}
-                        onChange={e => setField('attendees', e.target.value)}
+                        onChange={e => setField('attendees', e.target.value.replace(/[^0-9]/g, ''))}
                       />
                     </div>
                     <div className="fg">
@@ -412,6 +398,20 @@ export default function App() {
                 <button className="submit-btn" onClick={handleSubmitClick}>
                   {form.action === 'edit' ? 'Review & Update' : 'Review & Book'}
                 </button>
+
+                {/* Inline error alert (moved below button) */}
+                {formError && (
+                  <div className="form-alert show" style={{ marginTop: 20 }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="2"
+                         strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="12" y1="8"  x2="12"    y2="12"/>
+                      <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>{formError}</span>
+                  </div>
+                )}
 
               </div>
             )}
