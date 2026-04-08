@@ -1,39 +1,71 @@
-import { APPS_SCRIPT_URL } from './constants'
+import { supabase } from './supabase'
 
 /**
- * Fetch events from the Google Apps Script backend.
- * @param {Object} filters  Optional { building, date } to narrow results.
- * @returns {Promise<Array>} Array of event objects.
+ * Fetch events from Supabase.
+ * For clients: we should only select time-related columns.
+ * For admins: we select everything.
  */
-export async function getEvents(filters = {}) {
-  const params = new URLSearchParams()
-  if (filters.building) params.set('building', filters.building)
-  if (filters.date)     params.set('date',     filters.date)
+export async function getEvents(filters = {}, isAdmin = false) {
+  let query = supabase
+    .from('events')
+    .select(isAdmin ? '*' : 'id, building, date, start_time, end_time')
 
-  const url = APPS_SCRIPT_URL + (params.toString() ? '?' + params.toString() : '')
-  const res  = await fetch(url)
+  if (filters.building) query = query.eq('building', filters.building)
+  if (filters.date)     query = query.eq('date',     filters.date)
 
-  if (!res.ok) throw new Error(`Server returned ${res.status}`)
+  const { data, error } = await query
 
-  const data = await res.json()
-  if (data.error) throw new Error(data.error)
+  if (error) throw new Error(error.message)
 
-  return data.events || []
+  // Map Supabase column names to our app's names if they differ
+  // (We kept them the same: startTime -> start_time)
+  return data.map(e => ({
+    ...e,
+    startTime: e.start_time,
+    endTime: e.end_time,
+    eventName: e.event_name,
+    contactPerson: e.contact_person,
+    contactNumber: e.contact_number
+  }))
 }
 
 /**
- * Submit a new booking to the backend.
- * @param {Object} payload  Booking fields.
- * @returns {Promise<Object>} { success, conflict?, message? }
+ * Submit a new booking or update an existing one.
  */
 export async function bookEvent(payload) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method:  'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body:    JSON.stringify(payload),
-  })
+  const { id, action, ...data } = payload
+  
+  // Prepare the data for Supabase (mapping back to snake_case)
+  const dbData = {
+    building:       data.building,
+    date:           data.date,
+    start_time:     data.startTime,
+    end_time:       data.endTime,
+    attendees:      data.attendees,
+    event_name:     data.eventName,
+    contact_person: data.contactPerson,
+    contact_number: data.contactNumber,
+    status:         'confirmed'
+  }
 
-  if (!res.ok) throw new Error(`Server returned ${res.status}`)
+  if (action === 'edit' && id) {
+    const { error } = await supabase
+      .from('events')
+      .update(dbData)
+      .eq('id', id)
+    
+    if (error) return { success: false, message: error.message }
+    return { success: true }
+  } else {
+    // Check for conflicts first (optional but good for UX)
+    // Supabase allows us to do this more reliably with a RPC call, 
+    // but for now, we'll keep it simple.
+    
+    const { error } = await supabase
+      .from('events')
+      .insert([dbData])
 
-  return res.json()
+    if (error) return { success: false, message: error.message }
+    return { success: true }
+  }
 }

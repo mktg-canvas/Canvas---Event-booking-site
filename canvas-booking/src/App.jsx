@@ -9,6 +9,7 @@ import ConfirmModal  from './components/ConfirmModal'
 import { BUILDINGS, APPS_SCRIPT_URL } from './constants'
 import { toMins, fmtDate, fmtTime, todayISO, overlaps } from './utils'
 import { getEvents, bookEvent } from './api'
+import { supabase } from './supabase'
 
 /* ── View metadata ───────────────────────────────────────────────── */
 const VIEW_META = {
@@ -73,7 +74,7 @@ export default function App() {
   }
 
   /* Fetch booked ranges for availability preview */
-  const fetchPreview = useCallback(async (building, date) => {
+  const fetchPreview = useCallback(async (building, date, currentId) => {
     if (!building || !date || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
       setBookedRanges([])
       return
@@ -81,10 +82,10 @@ export default function App() {
     setPreviewLoading(true)
     try {
       const evs = await getEvents({ building, date })
-      // Events with only a startTime are treated as 1-hour bookings
+      // Filter out the current event being edited so its time appears free in the grid
       setBookedRanges(
         evs
-          .filter(e => e.startTime)
+          .filter(e => e.startTime && e.id !== currentId)
           .map(e => {
             const s = toMins(e.startTime)
             const e_ = e.endTime ? toMins(e.endTime) : s + 60
@@ -101,10 +102,14 @@ export default function App() {
 
   /* Re-fetch preview whenever building or date changes */
   useEffect(() => {
-    fetchPreview(form.building, form.date)
-    // Reset time selections when context changes
-    setForm(prev => ({ ...prev, startTime: '', endTime: '' }))
-  }, [form.building, form.date, fetchPreview])
+    fetchPreview(form.building, form.date, form.id)
+    // Only reset time selections if we are adding a new event, 
+    // or if the user is actively changing the building/date during an edit.
+    // We avoid resetting if they just clicked 'Edit' and the form is populating.
+    if (form.action !== 'edit') {
+      setForm(prev => ({ ...prev, startTime: '', endTime: '' }))
+    }
+  }, [form.building, form.date, form.id, fetchPreview])
 
   /* When start time changes, clear end time if now invalid */
   useEffect(() => {
@@ -185,7 +190,8 @@ export default function App() {
     setEventsLoading(true)
     setEventsError('')
     try {
-      const evs = await getEvents()
+      // Pass true for isAdmin to fetch all details like names and numbers
+      const evs = await getEvents({}, true)
       setEvents(evs)
     } catch (err) {
       setEventsError('Could not load events. Check your connection and click Refresh.')
