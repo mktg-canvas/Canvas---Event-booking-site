@@ -34,7 +34,7 @@ export default function PublicBooking() {
   function showToast(type, msg) {
     clearTimeout(toastTimer.current)
     setToast({ type, msg })
-    toastTimer.current = setTimeout(() => setToast(null), 4200)
+    toastTimer.current = setTimeout(() => setToast(null), 7000)
   }
 
   function setField(key, value) {
@@ -132,7 +132,7 @@ export default function PublicBooking() {
       const result  = await bookEvent(payload)
 
       if (result.success) {
-        showToast('success', `✓  "${form.eventName}" booked successfully!`)
+        showToast('success', `Your booking request has been received! Our team will contact you shortly.`)
         setFormState(EMPTY_FORM)
         setShowConfirm(false)
         setBookedRanges([])

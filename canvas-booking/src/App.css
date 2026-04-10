@@ -750,6 +750,16 @@ textarea::placeholder { color: #D1D5DB; }
   color: var(--text-light);
 }
 
+.tel-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tel-link:hover { text-decoration: underline; }
+
+.next-event-card .tel-link { color: rgba(255,255,255,0.9); }
+
 .event-card-actions {
   display: flex;
   justify-content: flex-end;
