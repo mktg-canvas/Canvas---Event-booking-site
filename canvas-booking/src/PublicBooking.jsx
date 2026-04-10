@@ -34,7 +34,18 @@ export default function PublicBooking() {
   function showToast(type, msg) {
     clearTimeout(toastTimer.current)
     setToast({ type, msg })
-    toastTimer.current = setTimeout(() => setToast(null), 7000)
+    toastTimer.current = setTimeout(() => setToast(null), 4200)
+  }
+
+  /* ── Celebration popup ─────────────────────────────────────────── */
+  const [showCelebration, setShowCelebration] = useState(false)
+  const celebrationTimer = useRef(null)
+
+  useEffect(() => () => clearTimeout(celebrationTimer.current), [])
+
+  function triggerCelebration() {
+    setShowCelebration(true)
+    celebrationTimer.current = setTimeout(() => setShowCelebration(false), 4500)
   }
 
   function setField(key, value) {
@@ -132,7 +143,7 @@ export default function PublicBooking() {
       const result  = await bookEvent(payload)
 
       if (result.success) {
-        showToast('success', `Your booking request has been received! Our team will contact you shortly.`)
+        triggerCelebration()
         setFormState(EMPTY_FORM)
         setShowConfirm(false)
         setBookedRanges([])
@@ -306,7 +317,7 @@ export default function PublicBooking() {
         />
       )}
 
-      {/* Toast */}
+      {/* Toast — for errors only */}
       {toast && (
         <div className={`toast t-${toast.type} show`}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -317,6 +328,23 @@ export default function PublicBooking() {
             }
           </svg>
           <span>{toast.msg}</span>
+        </div>
+      )}
+
+      {/* Celebration popup */}
+      {showCelebration && (
+        <div className="celebration-overlay" onClick={() => setShowCelebration(false)}>
+          <div className="celebration-card">
+            <div className="celebration-icon">👏</div>
+            <h2 className="celebration-title">Booking Request Sent!</h2>
+            <p className="celebration-msg">
+              Hey, your booking request has been received.<br />
+              Our team will get in touch with you shortly.
+            </p>
+            <button className="celebration-btn" onClick={() => setShowCelebration(false)}>
+              Done
+            </button>
+          </div>
         </div>
       )}
     </div>
