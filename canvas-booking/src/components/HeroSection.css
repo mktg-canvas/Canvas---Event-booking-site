@@ -212,7 +212,6 @@
 .hero-heading {
   margin: 0;
   line-height: 1.05;
-  white-space: nowrap;
   text-align: center;
 }
 
@@ -233,8 +232,74 @@
 
 /* ── Mobile ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .hero-nav      { padding: 0 20px; }
-  .hero-nav-logo { height: 100px; }
-  .hero          { padding: 24px; gap: 20px; }
-  .hero-body     { grid-template-columns: 1fr; }
+  .hero-nav {
+    padding: 0 20px;
+    height: 68px;
+  }
+
+  .hero-nav-logo { height: 80px; }
+
+  .hero-nav-btn {
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 20px 16px 32px;
+    gap: 16px;
+  }
+
+  .hero-heading-black,
+  .hero-heading-purple {
+    font-size: clamp(28px, 8vw, 48px);
+  }
+
+  /* Stack venue card above photo area */
+  .hero-body {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Venue tabs side by side on mobile */
+  .venues-row {
+    padding: 20px 16px;
+    gap: 10px;
+    border-radius: 16px;
+  }
+
+  .venues-row .venue-label {
+    display: none;
+  }
+
+  /* Two venue buttons side by side */
+  .venues-row {
+    flex-direction: column;
+  }
+
+  .venue-tab {
+    padding: 12px 14px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .venue-tab-name { font-size: 13px; }
+  .venue-tab-addr { font-size: 10px; }
+
+  /* Photo area with fixed height on mobile */
+  .photo-area {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .photo {
+    aspect-ratio: 4 / 3;
+    min-height: unset;
+  }
 }
