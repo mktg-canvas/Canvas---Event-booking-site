@@ -4,6 +4,8 @@ import Calendar     from './components/Calendar'
 import SlotGrid     from './components/SlotGrid'
 import ConfirmModal from './components/ConfirmModal'
 import { PUBLIC_BUILDINGS } from './constants'
+import { PAST_EVENT_PHOTOS } from './constants/photos'
+import { cloudinaryUrl } from './utils/cloudinary'
 import { toMins, overlaps } from './utils'
 import { getEvents, bookEvent } from './api'
 import './App.css'
@@ -167,14 +169,30 @@ export default function PublicBooking() {
         <div className="section-heading-wrap"><h2 className="section-heading">Past Events</h2></div>
         <div className="marquee-wrapper">
           <div className="marquee-track">
-            {[1,2,3,4,5,6,7,8].map(i => (
-              <div key={i} className={`marquee-photo mp-${(i % 6) + 1}`}>
-                <span>Event {i}</span>
+            {PAST_EVENT_PHOTOS.map(photo => (
+              <div key={photo.id} className="marquee-photo">
+                <img
+                  src={cloudinaryUrl(photo.publicId, 380, 260)}
+                  srcSet={`${cloudinaryUrl(photo.publicId, 380, 260)} 380w, ${cloudinaryUrl(photo.publicId, 760, 520)} 760w`}
+                  sizes="380px"
+                  alt={photo.alt}
+                  loading="lazy"
+                  width="380"
+                  height="260"
+                />
               </div>
             ))}
-            {[1,2,3,4,5,6,7,8].map(i => (
-              <div key={`d${i}`} className={`marquee-photo mp-${(i % 6) + 1}`}>
-                <span>Event {i}</span>
+            {PAST_EVENT_PHOTOS.map(photo => (
+              <div key={`d${photo.id}`} className="marquee-photo">
+                <img
+                  src={cloudinaryUrl(photo.publicId, 380, 260)}
+                  srcSet={`${cloudinaryUrl(photo.publicId, 380, 260)} 380w, ${cloudinaryUrl(photo.publicId, 760, 520)} 760w`}
+                  sizes="380px"
+                  alt={photo.alt}
+                  loading="lazy"
+                  width="380"
+                  height="260"
+                />
               </div>
             ))}
           </div>
