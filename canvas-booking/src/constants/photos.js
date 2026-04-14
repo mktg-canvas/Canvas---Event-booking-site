@@ -2,9 +2,14 @@ export const VENUE_PHOTOS = {
   '1331': [
     { publicId: 'WhatsApp_Image_2026-04-13_at_12.55.55_kcpfqx',   alt: 'Canvas 1331 venue' },
     { publicId: 'WhatsApp_Image_2026-04-13_at_12.55.55_1_olmx2y', alt: 'Canvas 1331 venue' },
+    { publicId: 'IMG_9131_xxnejw',                                 alt: 'Canvas 1331 venue' },
+    { publicId: 'IMG_9140_qbczky',                                 alt: 'Canvas 1331 venue' },
   ],
   '1317': [
     { publicId: '15094467-5354-420b-b4e4-99390f0ca017_ximkcf', alt: 'Canvas 1317 venue' },
+    { publicId: 'IMG-20250121-WA0004_rkomqn',                  alt: 'Canvas 1317 venue' },
+    { publicId: 'IMG-20251122-WA0096_wflwbi',                  alt: 'Canvas 1317 venue' },
+    { publicId: 'IMG-20251122-WA0091_w0br96',                  alt: 'Canvas 1317 venue' },
   ],
 };
 

@@ -26,8 +26,8 @@ export default function HeroSection({ onBookClick }) {
 
         {/* Heading */}
         <h1 className="hero-heading">
-          <span className="hero-heading-black">Events </span>
-          <span className="hero-heading-purple">@ Canvas.</span>
+          <span className="hero-heading-black">Events at </span>
+          <span className="hero-heading-canvas">Canvas.</span>
         </h1>
 
         {/* Two-column body */}
@@ -36,16 +36,23 @@ export default function HeroSection({ onBookClick }) {
           {/* Left — Venue tabs */}
           <div className="venues-row">
             <span className="venue-label">Select Venue</span>
+            <span className="venue-hint">Tap a venue to explore</span>
             {[
-              { id: '1331', label: 'Canvas 1331', address: 'HSR Layout, Bengaluru' },
-              { id: '1317', label: 'Canvas 1317', address: 'HSR Layout, Bengaluru' },
+              { id: '1331', label: 'Canvas 1331', address: '24th Main Road, HSR Layout, Bengaluru' },
+              { id: '1317', label: 'Canvas 1317', address: '24th Main Road, HSR Layout, Bengaluru' },
             ].map(v => (
               <button
                 key={v.id}
                 className={`venue-tab ${activeVenue === v.id ? 'active' : ''}`}
                 onClick={() => setActiveVenue(v.id)}
               >
-                <span className="venue-tab-name">{v.label}</span>
+                <div className="venue-tab-top">
+                  <span className="venue-tab-name">{v.label}</span>
+                  {activeVenue === v.id
+                    ? <span className="venue-tab-badge">Selected</span>
+                    : <span className="venue-tab-badge venue-tab-badge--idle">Select</span>
+                  }
+                </div>
                 <span className="venue-tab-addr">{v.address}</span>
               </button>
             ))}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,700;1,800&family=Bodoni+Moda:ital,wght@1,700;1,800;1,900&display=swap');
 
 /* ── Wrapper ────────────────────────────────────────────────────── */
 .hero-wrapper {
@@ -80,7 +80,17 @@
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   align-self: center;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+}
+
+.venue-hint {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  align-self: center;
+  margin-bottom: 6px;
+  font-style: italic;
 }
 
 .venue-tab {
@@ -98,16 +108,40 @@
   gap: 3px;
 }
 
+.venue-tab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .venue-tab-name {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   color: rgba(255, 255, 255, 0.7);
 }
 
 .venue-tab-addr {
   font-size: 11px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+}
+
+.venue-tab-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: #6600FF;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.venue-tab-badge--idle {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .venue-tab.active {
@@ -123,7 +157,12 @@
 
 .venue-tab.active .venue-tab-addr {
   color: #7C3AED;
-  opacity: 0.7;
+  opacity: 0.8;
+}
+
+.venue-tab.active .venue-tab-badge {
+  background: #5B21B6;
+  color: #ffffff;
 }
 
 .venue-tab:hover:not(.active) {
@@ -223,10 +262,10 @@
   color: #0D0D0D;
 }
 
-.hero-heading-purple {
-  font-family: 'Playfair Display', Georgia, serif;
+.hero-heading-canvas {
+  font-family: 'Bodoni Moda', Georgia, serif;
   font-size: clamp(32px, 5vw, 72px);
-  font-weight: 800;
+  font-weight: 900;
   font-style: italic;
   color: #6600FF;
 }
@@ -252,7 +291,7 @@
   }
 
   .hero-heading-black,
-  .hero-heading-purple {
+  .hero-heading-canvas {
     font-size: clamp(28px, 8vw, 48px);
   }
 
